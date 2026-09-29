@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2" # Change to your preferred region (e.g., ap-south-1)
+  region = "eu-north-1" # Change to your preferred region 
 }
 
 # Fetch the latest free Ubuntu AMI
