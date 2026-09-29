@@ -15,7 +15,7 @@ data "aws_ami" "ubuntu" {
 # Free-tier EC2 Resource
 resource "aws_instance" "my_free_ec2" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro" # Free-tier eligible (or "t3.micro" depending on region)
+  instance_type = "t3.micro" # Free-tier eligible (or "t3.micro" depending on region) [updating this to t3 since eu-north-1 is free there]
 
   tags = {
     Name        = "MyFirstAutomatedEC2"
