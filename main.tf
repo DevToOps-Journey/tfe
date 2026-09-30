@@ -37,12 +37,12 @@ resource "aws_instance" "my_free_ec2" {
     Environment = "Dev"
   }
 
+}
 # Output the private key directly in the CLI execution logs (marked sensitive)
 output "private_key_pem" {
   description = "The raw private key content in PEM format"
   value       = tls_private_key.ec2_key.private_key_pem
   sensitive   = true
-}
 }
 
 
