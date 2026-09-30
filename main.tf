@@ -2,6 +2,19 @@ provider "aws" {
   region = "eu-north-1" # Change to your preferred region 
 }
 
+# 1. Generate a new RSA SSH key pair
+resource "tls_private_key" "ec2_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+# 2. Register the generated public key with AWS
+resource "aws_key_pair" "generated_key" {
+  key_name   = "my-tfeautomatedec2-key"
+  public_key = tls_private_key.ec2_key.public_key_openssh
+}
+
+
 # Fetch the latest free Ubuntu AMI
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -17,8 +30,25 @@ resource "aws_instance" "my_free_ec2" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t3.micro" # Free-tier eligible (or "t3.micro" depending on region) [updating this to t3 since eu-north-1 is free there]
 
+  key_name      = aws_key_pair.generated_key.key_name
+
   tags = {
-    Name        = "MyFirstAutomatedEC2"
+    Name        = "MyFirst-sshkeypairassociated-AutomatedEC2"
     Environment = "Dev"
   }
+
+# Output the private key directly in the CLI execution logs (marked sensitive)
+output "private_key_pem" {
+  description = "The raw private key content in PEM format"
+  value       = tls_private_key.ec2_key.private_key_pem
+  sensitive   = true
 }
+}
+
+
+
+
+
+
+
+
