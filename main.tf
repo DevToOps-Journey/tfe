@@ -14,6 +14,13 @@ resource "aws_key_pair" "generated_key" {
   public_key = tls_private_key.ec2_key.public_key_openssh
 }
 
+# 3. Save the private key locally as a .pem file on your machine
+resource "local_file" "private_key_pem" {
+  content         = tls_private_key.ec2_key.private_key_pem
+  filename        = "${path.module}/my-ec2-key.pem"
+  file_permission = "0400"
+}
+
 
 # Fetch the latest free Ubuntu AMI
 data "aws_ami" "ubuntu" {
@@ -43,6 +50,12 @@ output "private_key_pem" {
   description = "The raw private key content in PEM format"
   value       = tls_private_key.ec2_key.private_key_pem
   sensitive   = true
+}
+
+# Output the saved .pem file location
+output "private_key_path" {
+  description = "Local path where the .pem file is saved"
+  value       = local_file.private_key_pem.filename
 }
 
 
